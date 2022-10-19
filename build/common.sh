@@ -405,6 +405,7 @@ function kube::build::docker_build() {
   readonly build_args
   echo "--pull = ${pull}"
   local -ra build_cmd=("${DOCKER[@]}" buildx build --load -t "${image}" "--pull=${pull}" "${build_args[@]}" "${context_dir}")
+  echo ${build_cmd[@]}
   kube::log::status "Building Docker image ${image}"
   local docker_output
   docker_output=$(DOCKER_CLI_EXPERIMENTAL=enabled "${build_cmd[@]}" 2>&1) || {
