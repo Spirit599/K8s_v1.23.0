@@ -428,11 +428,10 @@ func prioritizeNodes(
 		return nil, scoreStatus.AsError()
 	}
 
-	if klog.V(10).Enabled() {
-		for plugin, nodeScoreList := range scoresMap {
-			for _, nodeScore := range nodeScoreList {
-				klog.InfoS("Plugin scored node for pod", "pod", klog.KObj(pod), "plugin", plugin, "node", nodeScore.Name, "score", nodeScore.Score)
-			}
+	klog.Infof("prioritizeNodes")
+	for plugin, nodeScoreList := range scoresMap {
+		for _, nodeScore := range nodeScoreList {
+			klog.InfoS("Plugin scored node for pod", "pod", klog.KObj(pod), "plugin", plugin, "node", nodeScore.Name, "score", nodeScore.Score)
 		}
 	}
 
@@ -486,11 +485,10 @@ func prioritizeNodes(
 		}
 	}
 
-	if klog.V(10).Enabled() {
-		for i := range result {
-			klog.InfoS("Calculated node's final score for pod", "pod", klog.KObj(pod), "node", result[i].Name, "score", result[i].Score)
-		}
+	for i := range result {
+		klog.InfoS("Calculated node's final score for pod", "pod", klog.KObj(pod), "node", result[i].Name, "score", result[i].Score)
 	}
+
 	return result, nil
 }
 

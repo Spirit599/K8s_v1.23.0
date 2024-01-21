@@ -25,11 +25,13 @@ import (
 	_ "k8s.io/component-base/metrics/prometheus/version" // for version metric registration
 	"k8s.io/kubernetes/cmd/kube-scheduler/app"
 	"k8s.io/kubernetes/pkg/scheduler/framework/out-tree_plugins/demo"
+	"k8s.io/kubernetes/pkg/scheduler/framework/out-tree_plugins/diskiopriorty"
 )
 
 func main() {
 	command := app.NewSchedulerCommand(
 		app.WithPlugin(demo.Name, demo.New),
+		app.WithPlugin(diskiopriorty.Name, diskiopriorty.New),
 	)
 	code := cli.Run(command)
 	os.Exit(code)
