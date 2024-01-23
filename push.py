@@ -7,7 +7,7 @@ os.system("find . -name '*.exe' | xargs rm -vr")
 message = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 message = " \"" + message + "\" "
 
-repository = " git@github.com:Spirit599/K8s_v1.23.0.git "
+repository = " git@git.zhlh6.cn:Spirit599/K8s_v1.23.0.git "
 branch = " master "
 if len(sys.argv) >= 2:
 	message = sys.argv[1]
