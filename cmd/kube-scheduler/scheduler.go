@@ -24,6 +24,7 @@ import (
 	_ "k8s.io/component-base/metrics/prometheus/clientgo"
 	_ "k8s.io/component-base/metrics/prometheus/version" // for version metric registration
 	"k8s.io/kubernetes/cmd/kube-scheduler/app"
+	"k8s.io/kubernetes/pkg/scheduler/framework/out-tree_plugins/balancedallocation"
 	"k8s.io/kubernetes/pkg/scheduler/framework/out-tree_plugins/demo"
 	"k8s.io/kubernetes/pkg/scheduler/framework/out-tree_plugins/diskiopriorty"
 	"k8s.io/kubernetes/pkg/scheduler/framework/out-tree_plugins/leastrequested"
@@ -34,6 +35,7 @@ func main() {
 		app.WithPlugin(demo.Name, demo.New),
 		app.WithPlugin(diskiopriorty.Name, diskiopriorty.New),
 		app.WithPlugin(leastrequested.Name, leastrequested.New),
+		app.WithPlugin(balancedallocation.Name, balancedallocation.New),
 	)
 	code := cli.Run(command)
 	os.Exit(code)
