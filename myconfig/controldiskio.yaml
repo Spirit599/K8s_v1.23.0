@@ -6,14 +6,14 @@ metadata:
     'DiskIO': '10'
 spec:
   containers:
-  - image: control_disk_io:0.2
+  - image: control_disk_io:0.1
     name: controldiskio
-    imagePullPolicy: Never
+    imagePullPolicy: IfNotPresent
     env:
       - name: speed
-        value: "15"
-    command: ["/root/ControlDiskIO.sh", "15"]
+        value: "10"
+    command: ["/root/ControlDiskIO.sh", "10"]
     resources:
       requests:
-        cpu: 200m
-        memory: 200Mi
+        cpu: 100m
+        memory: 100Mi
