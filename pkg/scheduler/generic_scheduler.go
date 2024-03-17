@@ -431,7 +431,9 @@ func prioritizeNodes(
 	klog.Infof("prioritizeNodes")
 	for plugin, nodeScoreList := range scoresMap {
 		for _, nodeScore := range nodeScoreList {
-			klog.InfoS("Plugin scored node for pod", "pod", klog.KObj(pod), "plugin", plugin, "node", nodeScore.Name, "score", nodeScore.Score)
+			if plugin != "NodeResourcesFit" && plugin != "NodeResourcesBalancedAllocation" && plugin != "ImageLocality" {
+				klog.InfoS("Plugin scored node for pod", "pod", klog.KObj(pod), "plugin", plugin, "node", nodeScore.Name, "score", nodeScore.Score)
+			}
 		}
 	}
 
@@ -441,7 +443,9 @@ func prioritizeNodes(
 	for i := range nodes {
 		result = append(result, framework.NodeScore{Name: nodes[i].Name, Score: 0})
 		for j := range scoresMap {
-			result[i].Score += scoresMap[j][i].Score
+			if j != "NodeResourcesFit" && j != "NodeResourcesBalancedAllocation" && j != "ImageLocality" {
+				result[i].Score += scoresMap[j][i].Score
+			}
 		}
 	}
 

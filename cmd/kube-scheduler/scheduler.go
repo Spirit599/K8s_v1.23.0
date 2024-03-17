@@ -27,6 +27,7 @@ import (
 	"k8s.io/kubernetes/pkg/scheduler/framework/out-tree_plugins/balancedallocation"
 	"k8s.io/kubernetes/pkg/scheduler/framework/out-tree_plugins/demo"
 	"k8s.io/kubernetes/pkg/scheduler/framework/out-tree_plugins/diskiopriorty"
+	"k8s.io/kubernetes/pkg/scheduler/framework/out-tree_plugins/iopriorty"
 	"k8s.io/kubernetes/pkg/scheduler/framework/out-tree_plugins/leastrequested"
 )
 
@@ -36,6 +37,7 @@ func main() {
 		app.WithPlugin(diskiopriorty.Name, diskiopriorty.New),
 		app.WithPlugin(leastrequested.Name, leastrequested.New),
 		app.WithPlugin(balancedallocation.Name, balancedallocation.New),
+		app.WithPlugin(iopriorty.Name, iopriorty.New),
 	)
 	code := cli.Run(command)
 	os.Exit(code)

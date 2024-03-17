@@ -1,4 +1,4 @@
-package balancedallocation
+package iopriorty
 
 import (
 	"encoding/json"
@@ -43,7 +43,7 @@ func getNetIOData() {
 			if ok {
 				num, _ := strconv.ParseFloat(value, 64)
 				// fmt.Printf("%s: %s %f %f %f\n", nodeName, value, num/mb, num, mb)
-				curNetIO[nodeName] = num / mb
+				curNetIO[nodeName] = num / mb * 100
 			}
 		}
 	}

@@ -15,31 +15,31 @@ import (
 var curDiskIO = map[string]float64{}
 var maxLimitDiskIO = map[string]float64{
 	"master": 0,
-	"node1":  500,
-	"node2":  500,
-	"node3":  500,
-	"node4":  500,
-	"node5":  500,
-	"node6":  500,
-	"node7":  500,
-	"node8":  500,
-	"node9":  500,
-	"node10": 500,
+	"node1":  30,
+	"node2":  30,
+	"node3":  30,
+	"node4":  30,
+	"node5":  30,
+	"node6":  30,
+	"node7":  30,
+	"node8":  30,
+	"node9":  30,
+	"node10": 30,
 }
 
 var curNetIO = map[string]float64{}
 var maxLimitNetIO = map[string]float64{
 	"master": 0,
-	"node1":  500,
-	"node2":  500,
-	"node3":  500,
-	"node4":  500,
-	"node5":  500,
-	"node6":  500,
-	"node7":  500,
-	"node8":  500,
-	"node9":  500,
-	"node10": 500,
+	"node1":  1,
+	"node2":  1,
+	"node3":  1,
+	"node4":  1,
+	"node5":  1,
+	"node6":  1,
+	"node7":  1,
+	"node8":  1,
+	"node9":  1,
+	"node10": 1,
 }
 
 var curCpuRate = map[string]float64{}
@@ -107,6 +107,7 @@ func (pl *BalancedAllocation) PreScore(
 
 	reqDiskIO, _ := strconv.ParseFloat(pod.Annotations["DiskIO"], 64)
 	reqNetIO, _ := strconv.ParseFloat(pod.Annotations["NetIO"], 64)
+	reqNetIO = reqNetIO / 1000
 	klog.Infof("reqDiskIO:%f reqNetIO:%f", reqDiskIO, reqNetIO)
 
 	var RequestedMatrix [][]float64

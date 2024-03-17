@@ -247,6 +247,7 @@ func (a *HorizontalController) processNextWorkItem(ctx context.Context) bool {
 func (a *HorizontalController) computeReplicasForMetrics(ctx context.Context, hpa *autoscalingv2.HorizontalPodAutoscaler, scale *autoscalingv1.Scale,
 	metricSpecs []autoscalingv2.MetricSpec) (replicas int32, metric string, statuses []autoscalingv2.MetricStatus, timestamp time.Time, err error) {
 
+	klog.Infof("computeReplicasForMetrics")
 	if scale.Status.Selector == "" {
 		errMsg := "selector is required"
 		a.eventRecorder.Event(hpa, v1.EventTypeWarning, "SelectorRequired", errMsg)
@@ -306,6 +307,7 @@ func (a *HorizontalController) computeReplicasForMetric(ctx context.Context, hpa
 
 	switch spec.Type {
 	case autoscalingv2.ObjectMetricSourceType:
+		klog.Infof("autoscalingv2.ObjectMetricSourceType")
 		metricSelector, err := metav1.LabelSelectorAsSelector(spec.Object.Metric.Selector)
 		if err != nil {
 			condition := a.getUnableComputeReplicaCountCondition(hpa, "FailedGetObjectMetric", err)
@@ -316,6 +318,7 @@ func (a *HorizontalController) computeReplicasForMetric(ctx context.Context, hpa
 			return 0, "", time.Time{}, condition, fmt.Errorf("failed to get object metric value: %v", err)
 		}
 	case autoscalingv2.PodsMetricSourceType:
+		klog.Infof("autoscalingv2.PodsMetricSourceType")
 		metricSelector, err := metav1.LabelSelectorAsSelector(spec.Pods.Metric.Selector)
 		if err != nil {
 			condition := a.getUnableComputeReplicaCountCondition(hpa, "FailedGetPodsMetric", err)
@@ -326,21 +329,25 @@ func (a *HorizontalController) computeReplicasForMetric(ctx context.Context, hpa
 			return 0, "", time.Time{}, condition, fmt.Errorf("failed to get pods metric value: %v", err)
 		}
 	case autoscalingv2.ResourceMetricSourceType:
+		klog.Infof("autoscalingv2.ResourceMetricSourceType")
 		replicaCountProposal, timestampProposal, metricNameProposal, condition, err = a.computeStatusForResourceMetric(ctx, specReplicas, spec, hpa, selector, status)
 		if err != nil {
 			return 0, "", time.Time{}, condition, err
 		}
 	case autoscalingv2.ContainerResourceMetricSourceType:
+		klog.Infof("autoscalingv2.ContainerResourceMetricSourceType")
 		replicaCountProposal, timestampProposal, metricNameProposal, condition, err = a.computeStatusForContainerResourceMetric(ctx, specReplicas, spec, hpa, selector, status)
 		if err != nil {
 			return 0, "", time.Time{}, condition, err
 		}
 	case autoscalingv2.ExternalMetricSourceType:
+		klog.Infof("autoscalingv2.ExternalMetricSourceType")
 		replicaCountProposal, timestampProposal, metricNameProposal, condition, err = a.computeStatusForExternalMetric(specReplicas, statusReplicas, spec, hpa, selector, status)
 		if err != nil {
 			return 0, "", time.Time{}, condition, err
 		}
 	default:
+		klog.Infof("autoscalingv2.default")
 		errMsg := fmt.Sprintf("unknown metric source type %q", string(spec.Type))
 		err = fmt.Errorf(errMsg)
 		condition := a.getUnableComputeReplicaCountCondition(hpa, "InvalidMetricSourceType", err)
@@ -420,6 +427,7 @@ func (a *HorizontalController) computeStatusForObjectMetric(specReplicas, status
 
 // computeStatusForPodsMetric computes the desired number of replicas for the specified metric of type PodsMetricSourceType.
 func (a *HorizontalController) computeStatusForPodsMetric(currentReplicas int32, metricSpec autoscalingv2.MetricSpec, hpa *autoscalingv2.HorizontalPodAutoscaler, selector labels.Selector, status *autoscalingv2.MetricStatus, metricSelector labels.Selector) (replicaCountProposal int32, timestampProposal time.Time, metricNameProposal string, condition autoscalingv2.HorizontalPodAutoscalerCondition, err error) {
+	klog.Infof("computeStatusForPodsMetric")
 	replicaCountProposal, utilizationProposal, timestampProposal, err := a.replicaCalc.GetMetricReplicas(currentReplicas, metricSpec.Pods.Target.AverageValue.MilliValue(), metricSpec.Pods.Metric.Name, hpa.Namespace, selector, metricSelector)
 	if err != nil {
 		condition = a.getUnableComputeReplicaCountCondition(hpa, "FailedGetPodsMetric", err)

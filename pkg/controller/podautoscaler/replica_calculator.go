@@ -28,6 +28,7 @@ import (
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/util/sets"
 	corelisters "k8s.io/client-go/listers/core/v1"
+	"k8s.io/klog/v2"
 	podutil "k8s.io/kubernetes/pkg/api/v1/pod"
 	metricsclient "k8s.io/kubernetes/pkg/controller/podautoscaler/metrics"
 )
@@ -59,6 +60,8 @@ func NewReplicaCalculator(metricsClient metricsclient.MetricsClient, podLister c
 		delayOfInitialReadinessStatus: delayOfInitialReadinessStatus,
 	}
 }
+
+var downCnt int = 0
 
 // GetResourceReplicas calculates the desired replica count based on a target resource utilization percentage
 // of the given resource for pods matching the given selector in the given namespace, and the current replica count
@@ -165,6 +168,7 @@ func (c *ReplicaCalculator) GetRawResourceReplicas(ctx context.Context, currentR
 // (as a milli-value) for pods matching the given selector in the given namespace, and the
 // current replica count
 func (c *ReplicaCalculator) GetMetricReplicas(currentReplicas int32, targetUtilization int64, metricName string, namespace string, selector labels.Selector, metricSelector labels.Selector) (replicaCount int32, utilization int64, timestamp time.Time, err error) {
+	klog.Infof("GetMetricReplicas")
 	metrics, timestamp, err := c.metricsClient.GetRawMetric(metricName, namespace, selector, metricSelector)
 	if err != nil {
 		return 0, 0, time.Time{}, fmt.Errorf("unable to get metric %s: %v", metricName, err)
@@ -246,6 +250,22 @@ func (c *ReplicaCalculator) calcPlainMetricReplicas(metrics metricsclient.PodMet
 
 	// return the result, where the number of replicas considered is
 	// however many replicas factored into our calculation
+
+	PredateReplicas := arimaPredate(targetUtilization, currentReplicas)
+	klog.Infof("PredateReplicas %d", PredateReplicas)
+
+	if newReplicas > currentReplicas {
+		downCnt = 0
+		return max(newReplicas, PredateReplicas), utilization, nil
+	} else {
+		downCnt++
+		if downCnt > 5 {
+			return min(newReplicas, PredateReplicas), utilization, nil
+		} else {
+			return currentReplicas, utilization, nil
+		}
+	}
+
 	return newReplicas, utilization, nil
 }
 

@@ -9,7 +9,7 @@ import (
 
 func getNetIOData() {
 
-	query := "sum by(instance) (irate(node_network_transmit_bytes_total{device!~\"bond.*?|lo\"}[1m]))"
+	query := "sum by(instance) (irate(node_network_receive_bytes_totalv2[1m]))"
 	// 对查询进行 URL 编码
 	encodedQuery := url.QueryEscape(query)
 
