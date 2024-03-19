@@ -159,7 +159,7 @@ func (pl *BalancedAllocation) Score(ctx context.Context, state *framework.CycleS
 	// 	return 0, framework.AsStatus(fmt.Errorf("getting node %q from Snapshot: %w", nodeName, err))
 	// }
 
-	return int64(nodeScore[nodeName]), nil
+	return int64(100 * nodeScore[nodeName]), nil
 }
 
 // ScoreExtensions of the Score plugin.
