@@ -266,7 +266,7 @@ func (c *ReplicaCalculator) calcPlainMetricReplicas(metrics metricsclient.PodMet
 		}
 	}
 
-	return newReplicas, utilization, nil
+	// return newReplicas, utilization, nil
 }
 
 // GetObjectMetricReplicas calculates the desired replica count based on a target metric utilization (as a milli-value)
