@@ -119,7 +119,7 @@ func (pl *LeastRequested) Score(ctx context.Context, state *framework.CycleState
 	// 	return 0, framework.AsStatus(fmt.Errorf("getting node %q from Snapshot: %w", nodeName, err))
 	// }
 
-	return 0, nil
+	return int64(nodeScore[nodeName]), nil
 }
 
 // ScoreExtensions of the Score plugin.
